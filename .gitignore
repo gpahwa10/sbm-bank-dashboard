@@ -48,6 +48,6 @@ Thumbs.db
 .cache/
 .local/
 
-.env/
+.env
 .env.local
 .pnpm-store/
