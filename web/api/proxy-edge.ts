@@ -1,3 +1,5 @@
+/// <reference lib="dom" />
+/// <reference types="node" />
 /**
  * Proxies /api/* to API_PROXY_ORIGIN so the static SPA can keep calling /api
  * without VITE_API_BASE_URL at build time. Set API_PROXY_ORIGIN in Vercel
@@ -31,7 +33,7 @@ export async function proxyApi(request: Request): Promise<Response> {
   const upstreamUrl = `${base}${url.pathname}${url.search}`;
 
   const headers = new Headers();
-  request.headers.forEach((value, key) => {
+  request.headers.forEach((value: string, key: string) => {
     if (!HOP_BY_HOP.has(key.toLowerCase())) {
       headers.set(key, value);
     }
