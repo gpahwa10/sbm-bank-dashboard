@@ -6,11 +6,10 @@
   "workspaces": ["artifacts/*", "lib/*", "scripts"],
   "scripts": {
     "dev": "npm run dev -w @workspace/web",
-    "dev:api": "npm run dev -w @workspace/api-server",
     "dev:mockup": "npm run dev -w @workspace/mockup-sandbox",
     "build": "npm run typecheck && npm run build --workspaces --if-present",
     "typecheck:libs": "tsc --build",
-    "typecheck": "npm run typecheck:libs && npm run typecheck -w @workspace/web -w @workspace/mockup-sandbox -w @workspace/api-server -w @workspace/scripts --if-present"
+    "typecheck": "npm run typecheck:libs && npm run typecheck -w @workspace/web -w @workspace/mockup-sandbox -w @workspace/scripts --if-present"
   },
   "devDependencies": {
     "typescript": "~5.9.2",

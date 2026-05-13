@@ -4,7 +4,6 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Run & Operate
 
-- `npm run dev:api` — run the API server (build + start; default port from API server)
 - `npm run typecheck` — full typecheck across all packages
 - `npm run build` — typecheck + build all packages
 - `npm run codegen -w @workspace/api-spec` — regenerate API hooks and Zod schemas from the OpenAPI spec
@@ -14,11 +13,9 @@ _Replace the heading above with the project's name, and this line with one sente
 ## Stack
 
 - npm workspaces, Node.js 24, TypeScript 5.9
-- API: Express 5
-- DB: PostgreSQL + Drizzle ORM
-- Validation: Zod (`zod/v4`), `drizzle-zod`
-- API codegen: Orval (from OpenAPI spec)
-- Build: esbuild (CJS bundle)
+- Frontend: React + Vite (`artifacts/web`); demo data via `mock-store` / `mock-hooks`
+- DB / schema libs (`lib/db`, `lib/api-zod`) remain for codegen and optional tooling
+- API codegen: Orval (from OpenAPI spec in `lib/api-spec`)
 
 ## Where things live
 
