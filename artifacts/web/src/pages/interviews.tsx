@@ -53,6 +53,7 @@ export default function InterviewsPage() {
       await feedbackMutation.mutateAsync({
         id: showFeedback,
         data: {
+          feedback: feedback.comments || "Interview feedback submitted.",
           ...feedback,
           overallScore: Number(feedback.overallScore),
           technicalScore: feedback.technicalScore ? Number(feedback.technicalScore) : undefined,

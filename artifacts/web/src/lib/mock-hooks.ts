@@ -20,7 +20,10 @@ export function useLogin() {
 }
 
 export function useLogout() {
-  return makeMutation(() => undefined);
+  return {
+    mutateAsync: async (): Promise<void> => undefined,
+    isPending: false,
+  };
 }
 
 // Dashboard
@@ -279,10 +282,6 @@ export function useMarkNotificationRead() {
     markNotificationRead(id);
     return { id };
   });
-}
-
-export function getListNotificationsQueryKey(_params?: unknown) {
-  return ["notifications"];
 }
 
 // Reports
