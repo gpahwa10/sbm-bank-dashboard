@@ -5,7 +5,7 @@ import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, L
 const COLORS = ["#1e3a5f", "#2563eb", "#3b82f6", "#60a5fa", "#93c5fd", "#bfdbfe", "#dbeafe"];
 
 export default function ReportsPage() {
-  const { data: trends = [] } = useGetHiringTrends({ params: { months: 6 } });
+  const { data: trends = [] } = useGetHiringTrends({ months: 6 });
   const { data: sources = [] } = useGetSourceEffectiveness();
   const { data: recruiterPerf = [] } = useGetRecruiterPerformance();
   const { data: offerAcceptance = [] } = useGetOfferAcceptance();

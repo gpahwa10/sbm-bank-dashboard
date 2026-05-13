@@ -52,7 +52,7 @@ export default function RequisitionsPage() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ jobTitle: "", department: "Risk & Compliance", grade: "G5", headcount: 1, justification: "", employmentType: "permanent", location: "Lagos" });
   const { toast } = useToast();
-  const { data, refetch } = useListRequisitions({ params: {} });
+  const { data, refetch } = useListRequisitions({});
   const createMutation = useCreateRequisition();
   const approveMutation = useApproveRequisition();
 
@@ -72,7 +72,7 @@ export default function RequisitionsPage() {
 
   const handleApprove = async (id: number, action: string) => {
     try {
-      await approveMutation.mutateAsync({ params: { id }, data: { action: action as "approve" | "reject", comments: "" } });
+      await approveMutation.mutateAsync({ id, data: { action: action as "approve" | "reject", comments: "" } });
       toast({ title: `Requisition ${action === "approve" ? "approved" : "rejected"}` });
       refetch();
     } catch {

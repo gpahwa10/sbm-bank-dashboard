@@ -19,7 +19,7 @@ export default function JobsPage() {
   const [filterStatus, setFilterStatus] = useState("");
   const [form, setForm] = useState({ title: "", department: "Risk & Compliance", type: "external", description: "", source: "LinkedIn" });
   const { toast } = useToast();
-  const { data: jobs = [], refetch } = useListJobs({ params: filterStatus ? { status: filterStatus } : {} });
+  const { data: jobs = [], refetch } = useListJobs(filterStatus ? { status: filterStatus } : {});
   const createMutation = useCreateJob();
   const updateMutation = useUpdateJob();
 
@@ -38,7 +38,7 @@ export default function JobsPage() {
   const handleToggleStatus = async (id: number, status: string) => {
     const newStatus = status === "active" ? "closed" : "active";
     try {
-      await updateMutation.mutateAsync({ params: { id }, data: { status: newStatus } });
+      await updateMutation.mutateAsync({ id, data: { status: newStatus } });
       refetch();
     } catch {
       toast({ title: "Update failed", variant: "destructive" });

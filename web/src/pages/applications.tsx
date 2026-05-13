@@ -20,13 +20,13 @@ const STAGES = [
 export default function ApplicationsPage() {
   const [view, setView] = useState<"list" | "kanban">("list");
   const { toast } = useToast();
-  const { data, refetch } = useListApplications({ params: {} });
+  const { data, refetch } = useListApplications({});
   const moveMutation = useMoveApplicationStage();
   const apps = data?.data ?? [];
 
   const handleMove = async (id: number, newStage: string) => {
     try {
-      await moveMutation.mutateAsync({ params: { id }, data: { stage: newStage } });
+      await moveMutation.mutateAsync({ id, data: { stage: newStage } });
       refetch();
     } catch {
       toast({ title: "Failed to move stage", variant: "destructive" });

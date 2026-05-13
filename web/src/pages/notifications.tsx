@@ -13,13 +13,13 @@ const TYPE_COLORS: Record<string, string> = {
 };
 
 export default function NotificationsPage() {
-  const { data: notifications = [], refetch } = useListNotifications({ params: {} });
+  const { data: notifications = [], refetch } = useListNotifications({});
   const markReadMutation = useMarkNotificationRead();
   const { toast } = useToast();
 
   const handleMarkRead = async (id: number) => {
     try {
-      await markReadMutation.mutateAsync({ params: { id } });
+      await markReadMutation.mutateAsync({ id });
       refetch();
     } catch {
       toast({ title: "Failed to mark as read", variant: "destructive" });

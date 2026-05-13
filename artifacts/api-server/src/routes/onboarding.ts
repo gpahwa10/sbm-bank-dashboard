@@ -48,7 +48,7 @@ router.get("/onboarding", async (req, res): Promise<void> => {
 });
 
 router.post("/onboarding", async (req, res): Promise<void> => {
-  const parsed = CreateOnboardingBody.safeParse(req.body);
+  const parsed = CreateOnboardingRecordBody.safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ error: parsed.error.message }); return; }
 
   const startDate = new Date(parsed.data.startDate);

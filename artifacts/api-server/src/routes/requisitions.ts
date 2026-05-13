@@ -75,7 +75,19 @@ router.patch("/requisitions/:id", async (req, res): Promise<void> => {
   const parsed = UpdateRequisitionBody.safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ error: parsed.error.message }); return; }
 
-  const [item] = await db.update(requisitionsTable).set(parsed.data).where(eq(requisitionsTable.id, params.data.id)).returning();
+  const { budget, ...rest } = parsed.data;
+  const setValues = {
+    ...rest,
+    ...(budget !== undefined
+      ? { budget: budget != null ? String(budget) : null }
+      : {}),
+  };
+
+  const [item] = await db
+    .update(requisitionsTable)
+    .set(setValues)
+    .where(eq(requisitionsTable.id, params.data.id))
+    .returning();
   if (!item) { res.status(404).json({ error: "Not found" }); return; }
   res.json(item);
 });

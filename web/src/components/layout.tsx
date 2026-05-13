@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'wouter';
 import { useAuthStore } from '@/lib/auth';
-import { useListNotifications, useLogout } from '@workspace/api-client-react';
+import { useListNotifications, useLogout, getListNotificationsQueryKey } from "@workspace/api-client-react";
 import {
   LayoutDashboard,
   Users,
@@ -28,12 +28,17 @@ export function Layout({ children }: LayoutProps) {
   const [location, setLocation] = useLocation();
   const logoutMutation = useLogout();
   
-  const { data: notifications } = useListNotifications({ query: { enabled: !!user } });
+  const { data: notifications } = useListNotifications(undefined, {
+    query: {
+      queryKey: getListNotificationsQueryKey(undefined),
+      enabled: !!user,
+    },
+  });
   const unreadCount = notifications?.filter(n => !n.read).length || 0;
 
   const handleLogout = async () => {
     try {
-      await logoutMutation.mutateAsync({});
+      await logoutMutation.mutateAsync();
     } catch (e) {
       // Ignore
     } finally {

@@ -27,7 +27,7 @@ export default function CandidatesPage() {
   const [analysingId, setAnalysingId] = useState<number | null>(null);
   const [form, setForm] = useState({ firstName: "", lastName: "", email: "", phone: "", currentRole: "", currentCompany: "", source: "direct", yearsOfExperience: 5 });
   const { toast } = useToast();
-  const { data, refetch } = useListCandidates({ params: search ? { search } : {} });
+  const { data, refetch } = useListCandidates(search ? { search } : {});
   const createMutation = useCreateCandidate();
   const analysisMutation = useGenerateCandidateAiAnalysis();
   const candidates = data?.data ?? [];
@@ -35,7 +35,7 @@ export default function CandidatesPage() {
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await createMutation.mutateAsync({ data: { ...form, skills: [], tags: [] } });
+      await createMutation.mutateAsync({ data: { ...form, skills: [] } });
       toast({ title: "Candidate added" });
       setShowForm(false);
       refetch();
@@ -47,7 +47,7 @@ export default function CandidatesPage() {
   const handleAnalyse = async (id: number) => {
     setAnalysingId(id);
     try {
-      await analysisMutation.mutateAsync({ params: { id } });
+      await analysisMutation.mutateAsync({ id });
       toast({ title: "AI analysis complete" });
       refetch();
     } catch {

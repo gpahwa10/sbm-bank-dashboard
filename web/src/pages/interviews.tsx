@@ -20,7 +20,7 @@ export default function InterviewsPage() {
   const [newInterview, setNewInterview] = useState({ applicationId: 1, scheduledAt: "", duration: 60, type: "behavioral", location: "Conference Room A" });
   const [feedback, setFeedback] = useState({ interviewerName: "", overallScore: 7, technicalScore: "", behavioralScore: "", recommendation: "hire", comments: "" });
   const { toast } = useToast();
-  const { data: interviews = [], refetch } = useListInterviews({ params: {} });
+  const { data: interviews = [], refetch } = useListInterviews({});
   const createMutation = useCreateInterview();
   const updateMutation = useUpdateInterview();
   const feedbackMutation = useSubmitInterviewFeedback();
@@ -39,7 +39,7 @@ export default function InterviewsPage() {
 
   const handleComplete = async (id: number) => {
     try {
-      await updateMutation.mutateAsync({ params: { id }, data: { status: "completed" } });
+      await updateMutation.mutateAsync({ id, data: { status: "completed" } });
       refetch();
     } catch {
       toast({ title: "Update failed", variant: "destructive" });
@@ -51,7 +51,7 @@ export default function InterviewsPage() {
     if (!showFeedback) return;
     try {
       await feedbackMutation.mutateAsync({
-        params: { id: showFeedback },
+        id: showFeedback,
         data: {
           ...feedback,
           overallScore: Number(feedback.overallScore),
@@ -164,19 +164,23 @@ export default function InterviewsPage() {
             <tbody>
               {interviews.length === 0 ? (
                 <tr><td colSpan={7} className="text-center py-12 text-sm text-muted-foreground">No interviews scheduled</td></tr>
-              ) : interviews.map((i) => (
+              ) : interviews.map((i) => {
+                const app = i.application;
+                const candidate = app?.candidate;
+                const job = app?.job;
+                const candidateName =
+                  candidate != null
+                    ? `${candidate.firstName} ${candidate.lastName}`
+                    : "Unknown";
+                return (
                 <tr key={i.id} className="border-b border-border hover:bg-muted/30 transition-colors">
                   <td className="py-3 px-3">
                     <div className="text-xs font-medium text-card-foreground">
-                      {(i as Record<string, unknown>).application != null
-                        ? `${((i as Record<string, unknown>).application as Record<string, unknown>)?.candidate != null ? `${(((i as Record<string, unknown>).application as Record<string, unknown>)?.candidate as Record<string, unknown>)?.firstName} ${(((i as Record<string, unknown>).application as Record<string, unknown>)?.candidate as Record<string, unknown>)?.lastName}` : "Unknown"}` 
-                        : `Application #${i.applicationId}`}
+                      {app != null ? candidateName : `Application #${i.applicationId}`}
                     </div>
                   </td>
                   <td className="py-3 px-3 text-xs text-muted-foreground">
-                    {(i as Record<string, unknown>).application != null
-                      ? ((((i as Record<string, unknown>).application as Record<string, unknown>)?.job as Record<string, unknown>)?.title as string) ?? "—"
-                      : "—"}
+                    {job?.title ?? "—"}
                   </td>
                   <td className="py-3 px-3 text-xs text-muted-foreground">{new Date(i.scheduledAt).toLocaleString()}</td>
                   <td className="py-3 px-3 text-xs text-muted-foreground capitalize">{i.type.replace("_", " ")}</td>
@@ -199,7 +203,8 @@ export default function InterviewsPage() {
                     </div>
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>

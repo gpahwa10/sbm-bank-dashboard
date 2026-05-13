@@ -24,7 +24,7 @@ const ACTION_COLORS: Record<string, string> = {
 
 export default function CompliancePage() {
   const { data: summary } = useGetComplianceDashboard();
-  const { data: logsData } = useListAuditLogs({ params: {} });
+  const { data: logsData } = useListAuditLogs({});
   const logs = logsData?.data ?? [];
 
   return (

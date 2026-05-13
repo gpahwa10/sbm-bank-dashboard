@@ -4,18 +4,19 @@ Enterprise-grade ATS (Applicant Tracking System) built for First Bank Nigeria. F
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 8080)
-- `pnpm --filter @workspace/ats run dev` — run the React frontend (port from $PORT)
-- `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- `pnpm --filter @workspace/scripts run seed` — seed the database with demo data
+- `npm run dev -w @workspace/api-server` — run the API server (defaults to **8080**; loads repo-root `.env` for `DATABASE_URL`)
+- `npm run dev` or `npm run dev -w @workspace/web` — run the React frontend (`web/`; defaults to **5173** and `BASE_PATH=/` if unset). Vite proxies **`/api`** to **`http://127.0.0.1:8080`** (override with **`VITE_API_PROXY_TARGET`**).
+- `npm run dev` or `npm run dev -w @workspace/web` — run the React frontend (`web/`; defaults to **5173** and `BASE_PATH=/` if unset)
+- `npm run typecheck` — full typecheck across all packages
+- `npm run build` — typecheck + build all packages
+- `npm run codegen -w @workspace/api-spec` — regenerate API hooks and Zod schemas from the OpenAPI spec
+- `npm run push -w @workspace/db` — push DB schema changes (dev only)
+- `npm run seed -w @workspace/scripts` — seed the database with demo data
 - Required env: `DATABASE_URL` — Postgres connection string, `SESSION_SECRET`
 
 ## Stack
 
-- pnpm workspaces, Node.js 24, TypeScript 5.9
+- npm workspaces, Node.js 24, TypeScript 5.9
 - Frontend: React + Vite + Tailwind CSS v4 + Recharts + Wouter routing
 - API: Express 5 (port 8080, paths under `/api`)
 - DB: PostgreSQL + Drizzle ORM
@@ -31,8 +32,8 @@ Enterprise-grade ATS (Applicant Tracking System) built for First Bank Nigeria. F
 - `lib/api-client-react/src/generated/` — Generated React Query hooks
 - `lib/api-zod/src/generated/` — Generated Zod validators
 - `artifacts/api-server/src/routes/` — All Express route handlers (14 files)
-- `artifacts/ats/src/pages/` — All React page components (11 pages)
-- `artifacts/ats/src/components/layout.tsx` — Main app shell (sidebar + header)
+- `web/src/pages/` — All React page components (11 pages)
+- `web/src/components/layout.tsx` — Main app shell (sidebar + header)
 - `scripts/src/seed.ts` — Database seeding script
 
 ## Architecture decisions
@@ -71,11 +72,11 @@ Enterprise-grade ATS (Applicant Tracking System) built for First Bank Nigeria. F
 ## Gotchas
 
 - Auth token is plain Base64 (userId:email) — suitable for demo only, not production
-- `pnpm run build` needs `PORT` and `BASE_PATH` env vars (set by workflow). Use `typecheck` for validation from CLI.
+- For a non-root deploy base, set `BASE_PATH` (and `PORT` if needed) before `npm run build -w @workspace/web`. Local dev defaults to `PORT=5173` and `BASE_PATH=/`.
 - DB `numeric` columns return strings from Drizzle — always convert with `Number()` before returning JSON
 - `onConflictDoNothing()` in seed script — safe to re-run without duplicating data
 
 ## Pointers
 
-- See `pnpm-workspace` skill for workspace structure and TypeScript setup
+- Root `package.json` defines npm `workspaces` (including `web/`) and `overrides`.
 - Demo credentials: `hr.admin@firstbankng.com` / `admin123`

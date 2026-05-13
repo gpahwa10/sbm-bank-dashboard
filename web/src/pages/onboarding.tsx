@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useListOnboardingRecords, useCreateOnboardingRecord, useListOnboardingTasks, useUpdateOnboardingTask } from "@workspace/api-client-react";
+import { useListOnboardingRecords, useCreateOnboardingRecord, useListOnboardingTasks, useUpdateOnboardingTask, type OnboardingRecord } from "@workspace/api-client-react";
 import { Layout } from "@/components/layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,13 +14,13 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 function TaskList({ recordId }: { recordId: number }) {
-  const { data: tasks = [], refetch } = useListOnboardingTasks({ params: { id: recordId } });
+  const { data: tasks = [], refetch } = useListOnboardingTasks(recordId);
   const updateMutation = useUpdateOnboardingTask();
   const { toast } = useToast();
 
   const handleComplete = async (taskId: number) => {
     try {
-      await updateMutation.mutateAsync({ params: { taskId }, data: { status: "completed", completedAt: new Date().toISOString().split("T")[0] } });
+      await updateMutation.mutateAsync({ taskId, data: { status: "completed", completedAt: new Date().toISOString().split("T")[0] } });
       refetch();
     } catch {
       toast({ title: "Update failed", variant: "destructive" });
@@ -59,7 +59,7 @@ export default function OnboardingPage() {
   const [expanded, setExpanded] = useState<number | null>(null);
   const [form, setForm] = useState({ candidateId: 1, startDate: "", department: "Risk & Compliance", manager: "" });
   const { toast } = useToast();
-  const { data: records = [], refetch } = useListOnboardingRecords({ params: {} });
+  const { data: records = [], refetch } = useListOnboardingRecords({});
   const createMutation = useCreateOnboardingRecord();
 
   const handleCreate = async (e: React.FormEvent) => {
@@ -120,10 +120,11 @@ export default function OnboardingPage() {
         <div className="bg-card border border-border rounded-sm overflow-hidden">
           {records.length === 0 ? (
             <div className="py-12 text-center text-sm text-muted-foreground">No onboarding records found</div>
-          ) : records.map((r) => {
-            const rec = r as Record<string, unknown>;
-            const candidate = rec.candidate as Record<string, unknown> | undefined;
-            const pct = rec.totalTasks ? Math.round((rec.completedTasks as number / rec.totalTasks as number) * 100) : 0;
+          ) : records.map((r: OnboardingRecord) => {
+            const candidate = r.candidate;
+            const totalTasks = r.totalTasks ?? 0;
+            const completedTasks = r.completedTasks ?? 0;
+            const pct = totalTasks ? Math.round((completedTasks / totalTasks) * 100) : 0;
             const isExpanded = expanded === r.id;
             return (
               <div key={r.id} className="border-b border-border last:border-0">

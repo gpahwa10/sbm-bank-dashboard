@@ -21,7 +21,7 @@ export default function OffersPage() {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ applicationId: 1, baseSalary: 0, allowances: 0, bonus: 0, currency: "NGN", joiningDate: "", expiryDate: "" });
   const { toast } = useToast();
-  const { data: offers = [], refetch } = useListOffers({ params: {} });
+  const { data: offers = [], refetch } = useListOffers({});
   const createMutation = useCreateOffer();
   const approveMutation = useApproveOffer();
 
@@ -44,7 +44,7 @@ export default function OffersPage() {
 
   const handleApprove = async (id: number, action: string) => {
     try {
-      await approveMutation.mutateAsync({ params: { id }, data: { action: action as "approve" | "reject", comments: "" } });
+      await approveMutation.mutateAsync({ id, data: { action: action as "approve" | "reject", comments: "" } });
       toast({ title: `Offer ${action === "approve" ? "approved" : "rejected"}` });
       refetch();
     } catch {
@@ -120,17 +120,17 @@ export default function OffersPage() {
               {offers.length === 0 ? (
                 <tr><td colSpan={7} className="text-center py-12 text-sm text-muted-foreground">No offers yet</td></tr>
               ) : offers.map((o) => {
-                const app = (o as Record<string, unknown>).application as Record<string, unknown> | undefined;
-                const candidate = app?.candidate as Record<string, unknown> | undefined;
-                const job = app?.job as Record<string, unknown> | undefined;
+                const app = o.application;
+                const candidate = app?.candidate;
+                const job = app?.job;
                 return (
                   <tr key={o.id} className="border-b border-border hover:bg-muted/30 transition-colors">
                     <td className="py-3 px-3">
                       <div className="text-xs font-medium text-card-foreground">{candidate ? `${candidate.firstName} ${candidate.lastName}` : `App #${o.applicationId}`}</div>
                     </td>
-                    <td className="py-3 px-3 text-xs text-muted-foreground">{(job?.title as string) ?? "—"}</td>
-                    <td className="py-3 px-3 text-xs text-muted-foreground">{fmt(o.baseSalary as number, o.currency)}</td>
-                    <td className="py-3 px-3 text-xs font-semibold text-card-foreground">{fmt(o.totalPackage as number, o.currency)}</td>
+                    <td className="py-3 px-3 text-xs text-muted-foreground">{job?.title ?? "—"}</td>
+                    <td className="py-3 px-3 text-xs text-muted-foreground">{fmt(o.baseSalary, o.currency)}</td>
+                    <td className="py-3 px-3 text-xs font-semibold text-card-foreground">{fmt(o.totalPackage, o.currency)}</td>
                     <td className="py-3 px-3">
                       <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-sm uppercase tracking-wide ${STATUS_COLORS[o.status] ?? "bg-slate-100"}`}>{o.status.replace("_", " ")}</span>
                     </td>
