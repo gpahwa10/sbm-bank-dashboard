@@ -3,20 +3,33 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: Enterprise Recruitment Automation Platform API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
-    description: Health operations
+  - name: auth
+  - name: dashboard
+  - name: requisitions
+  - name: jobs
+  - name: candidates
+  - name: applications
+  - name: interviews
+  - name: offers
+  - name: onboarding
+  - name: audit
+  - name: notifications
+  - name: approvals
+  - name: admin
+  - name: reports
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,13 +37,2386 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # ─── AUTH ────────────────────────────────────────────────────────────────────
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login with credentials
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout
+      responses:
+        "204":
+          description: Logged out
+
+  # ─── DASHBOARD ───────────────────────────────────────────────────────────────
+  /dashboard/hr-summary:
+    get:
+      operationId: getHrDashboard
+      tags: [dashboard]
+      summary: HR dashboard summary
+      responses:
+        "200":
+          description: HR dashboard metrics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HrDashboard"
+
+  /dashboard/hiring-manager-summary:
+    get:
+      operationId: getHiringManagerDashboard
+      tags: [dashboard]
+      summary: Hiring manager dashboard
+      responses:
+        "200":
+          description: Hiring manager metrics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HiringManagerDashboard"
+
+  /dashboard/executive-summary:
+    get:
+      operationId: getExecutiveDashboard
+      tags: [dashboard]
+      summary: Executive dashboard
+      responses:
+        "200":
+          description: Executive-level metrics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ExecutiveDashboard"
+
+  /dashboard/compliance-summary:
+    get:
+      operationId: getComplianceDashboard
+      tags: [dashboard]
+      summary: Compliance and audit dashboard
+      responses:
+        "200":
+          description: Compliance metrics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ComplianceDashboard"
+
+  /dashboard/pipeline-stats:
+    get:
+      operationId: getPipelineStats
+      tags: [dashboard]
+      summary: Candidate pipeline stage counts
+      responses:
+        "200":
+          description: Pipeline breakdown
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PipelineStageStat"
+
+  /dashboard/recent-activity:
+    get:
+      operationId: getRecentActivity
+      tags: [dashboard]
+      summary: Recent platform activity feed
+      responses:
+        "200":
+          description: Activity items
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityItem"
+
+  # ─── REQUISITIONS ────────────────────────────────────────────────────────────
+  /requisitions:
+    get:
+      operationId: listRequisitions
+      tags: [requisitions]
+      summary: List manpower requisitions
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: department
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of requisitions
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RequisitionList"
+    post:
+      operationId: createRequisition
+      tags: [requisitions]
+      summary: Submit a new manpower requisition
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequisitionInput"
+      responses:
+        "201":
+          description: Created requisition
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Requisition"
+
+  /requisitions/{id}:
+    get:
+      operationId: getRequisition
+      tags: [requisitions]
+      summary: Get requisition by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Requisition
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Requisition"
+    patch:
+      operationId: updateRequisition
+      tags: [requisitions]
+      summary: Update a requisition
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequisitionUpdate"
+      responses:
+        "200":
+          description: Updated requisition
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Requisition"
+    delete:
+      operationId: deleteRequisition
+      tags: [requisitions]
+      summary: Delete a requisition
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /requisitions/{id}/approve:
+    post:
+      operationId: approveRequisition
+      tags: [requisitions]
+      summary: Approve or reject a requisition workflow step
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApprovalAction"
+      responses:
+        "200":
+          description: Updated requisition
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Requisition"
+
+  /requisitions/{id}/workflow-history:
+    get:
+      operationId: getRequisitionWorkflowHistory
+      tags: [requisitions]
+      summary: Get workflow/approval history for a requisition
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Workflow history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WorkflowHistoryItem"
+
+  # ─── JOBS ─────────────────────────────────────────────────────────────────────
+  /jobs:
+    get:
+      operationId: listJobs
+      tags: [jobs]
+      summary: List job postings
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: type
+          in: query
+          schema:
+            type: string
+        - name: department
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of jobs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Job"
+    post:
+      operationId: createJob
+      tags: [jobs]
+      summary: Create a job posting
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JobInput"
+      responses:
+        "201":
+          description: Created job
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+
+  /jobs/{id}:
+    get:
+      operationId: getJob
+      tags: [jobs]
+      summary: Get job by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Job
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+    patch:
+      operationId: updateJob
+      tags: [jobs]
+      summary: Update a job posting
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/JobUpdate"
+      responses:
+        "200":
+          description: Updated job
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Job"
+    delete:
+      operationId: deleteJob
+      tags: [jobs]
+      summary: Delete a job
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  # ─── CANDIDATES ───────────────────────────────────────────────────────────────
+  /candidates:
+    get:
+      operationId: listCandidates
+      tags: [candidates]
+      summary: List candidates
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: stage
+          in: query
+          schema:
+            type: string
+        - name: jobId
+          in: query
+          schema:
+            type: integer
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of candidates
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CandidateList"
+    post:
+      operationId: createCandidate
+      tags: [candidates]
+      summary: Add a candidate
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CandidateInput"
+      responses:
+        "201":
+          description: Created candidate
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Candidate"
+
+  /candidates/{id}:
+    get:
+      operationId: getCandidate
+      tags: [candidates]
+      summary: Get candidate by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Candidate
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Candidate"
+    patch:
+      operationId: updateCandidate
+      tags: [candidates]
+      summary: Update a candidate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CandidateUpdate"
+      responses:
+        "200":
+          description: Updated candidate
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Candidate"
+    delete:
+      operationId: deleteCandidate
+      tags: [candidates]
+      summary: Delete candidate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /candidates/{id}/ai-analysis:
+    get:
+      operationId: getCandidateAiAnalysis
+      tags: [candidates]
+      summary: Get AI resume analysis for a candidate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: AI analysis result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiAnalysis"
+    post:
+      operationId: generateCandidateAiAnalysis
+      tags: [candidates]
+      summary: Trigger AI resume analysis for a candidate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: AI analysis result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiAnalysis"
+
+  # ─── APPLICATIONS ─────────────────────────────────────────────────────────────
+  /applications:
+    get:
+      operationId: listApplications
+      tags: [applications]
+      summary: List applications
+      parameters:
+        - name: jobId
+          in: query
+          schema:
+            type: integer
+        - name: candidateId
+          in: query
+          schema:
+            type: integer
+        - name: stage
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of applications
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicationList"
+    post:
+      operationId: createApplication
+      tags: [applications]
+      summary: Submit an application
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationInput"
+      responses:
+        "201":
+          description: Created application
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+
+  /applications/{id}:
+    get:
+      operationId: getApplication
+      tags: [applications]
+      summary: Get application by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Application
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+    patch:
+      operationId: updateApplication
+      tags: [applications]
+      summary: Update an application
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplicationUpdate"
+      responses:
+        "200":
+          description: Updated application
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+
+  /applications/{id}/move-stage:
+    post:
+      operationId: moveApplicationStage
+      tags: [applications]
+      summary: Move application to a new pipeline stage
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StageMove"
+      responses:
+        "200":
+          description: Updated application
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Application"
+
+  # ─── INTERVIEWS ───────────────────────────────────────────────────────────────
+  /interviews:
+    get:
+      operationId: listInterviews
+      tags: [interviews]
+      summary: List interviews
+      parameters:
+        - name: applicationId
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: from
+          in: query
+          schema:
+            type: string
+        - name: to
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of interviews
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Interview"
+    post:
+      operationId: createInterview
+      tags: [interviews]
+      summary: Schedule an interview
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InterviewInput"
+      responses:
+        "201":
+          description: Created interview
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Interview"
+
+  /interviews/{id}:
+    get:
+      operationId: getInterview
+      tags: [interviews]
+      summary: Get interview by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Interview
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Interview"
+    patch:
+      operationId: updateInterview
+      tags: [interviews]
+      summary: Update an interview
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InterviewUpdate"
+      responses:
+        "200":
+          description: Updated interview
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Interview"
+
+  /interviews/{id}/feedback:
+    get:
+      operationId: getInterviewFeedback
+      tags: [interviews]
+      summary: Get feedback for an interview
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Feedback list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/InterviewFeedback"
+    post:
+      operationId: submitInterviewFeedback
+      tags: [interviews]
+      summary: Submit interview feedback
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InterviewFeedbackInput"
+      responses:
+        "201":
+          description: Created feedback
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InterviewFeedback"
+
+  /interviews/{id}/ai-summary:
+    get:
+      operationId: getInterviewAiSummary
+      tags: [interviews]
+      summary: Get AI-generated interview summary
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: AI summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AiInterviewSummary"
+
+  # ─── OFFERS ──────────────────────────────────────────────────────────────────
+  /offers:
+    get:
+      operationId: listOffers
+      tags: [offers]
+      summary: List offers
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: applicationId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of offers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Offer"
+    post:
+      operationId: createOffer
+      tags: [offers]
+      summary: Create an offer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OfferInput"
+      responses:
+        "201":
+          description: Created offer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Offer"
+
+  /offers/{id}:
+    get:
+      operationId: getOffer
+      tags: [offers]
+      summary: Get offer by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Offer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Offer"
+    patch:
+      operationId: updateOffer
+      tags: [offers]
+      summary: Update an offer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OfferUpdate"
+      responses:
+        "200":
+          description: Updated offer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Offer"
+
+  /offers/{id}/approve:
+    post:
+      operationId: approveOffer
+      tags: [offers]
+      summary: Approve or reject an offer
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApprovalAction"
+      responses:
+        "200":
+          description: Updated offer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Offer"
+
+  # ─── ONBOARDING ───────────────────────────────────────────────────────────────
+  /onboarding:
+    get:
+      operationId: listOnboardingRecords
+      tags: [onboarding]
+      summary: List onboarding records
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+        - name: candidateId
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of onboarding records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OnboardingRecord"
+    post:
+      operationId: createOnboardingRecord
+      tags: [onboarding]
+      summary: Start onboarding for a new hire
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OnboardingInput"
+      responses:
+        "201":
+          description: Created onboarding record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OnboardingRecord"
+
+  /onboarding/{id}:
+    get:
+      operationId: getOnboardingRecord
+      tags: [onboarding]
+      summary: Get onboarding record by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Onboarding record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OnboardingRecord"
+
+  /onboarding/{id}/tasks:
+    get:
+      operationId: listOnboardingTasks
+      tags: [onboarding]
+      summary: List tasks for an onboarding record
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Onboarding tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OnboardingTask"
+
+  /onboarding/tasks/{taskId}:
+    patch:
+      operationId: updateOnboardingTask
+      tags: [onboarding]
+      summary: Update an onboarding task status
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OnboardingTaskUpdate"
+      responses:
+        "200":
+          description: Updated task
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OnboardingTask"
+
+  # ─── AUDIT LOG ────────────────────────────────────────────────────────────────
+  /audit-logs:
+    get:
+      operationId: listAuditLogs
+      tags: [audit]
+      summary: List audit log entries
+      parameters:
+        - name: entityType
+          in: query
+          schema:
+            type: string
+        - name: entityId
+          in: query
+          schema:
+            type: integer
+        - name: userId
+          in: query
+          schema:
+            type: integer
+        - name: from
+          in: query
+          schema:
+            type: string
+        - name: to
+          in: query
+          schema:
+            type: string
+        - name: page
+          in: query
+          schema:
+            type: integer
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Audit log entries
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditLogList"
+
+  # ─── NOTIFICATIONS ────────────────────────────────────────────────────────────
+  /notifications:
+    get:
+      operationId: listNotifications
+      tags: [notifications]
+      summary: List notifications for current user
+      parameters:
+        - name: unreadOnly
+          in: query
+          schema:
+            type: boolean
+      responses:
+        "200":
+          description: Notifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Notification"
+
+  /notifications/{id}/read:
+    post:
+      operationId: markNotificationRead
+      tags: [notifications]
+      summary: Mark a notification as read
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Updated notification
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notification"
+
+  /notifications/read-all:
+    post:
+      operationId: markAllNotificationsRead
+      tags: [notifications]
+      summary: Mark all notifications as read
+      responses:
+        "204":
+          description: Done
+
+  # ─── APPROVALS ────────────────────────────────────────────────────────────────
+  /approvals/pending:
+    get:
+      operationId: listPendingApprovals
+      tags: [approvals]
+      summary: List pending approvals for current user
+      responses:
+        "200":
+          description: Pending approvals
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PendingApproval"
+
+  # ─── REPORTS ─────────────────────────────────────────────────────────────────
+  /reports/hiring-trends:
+    get:
+      operationId: getHiringTrends
+      tags: [reports]
+      summary: Hiring trends by month and department
+      parameters:
+        - name: months
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Hiring trend data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/HiringTrendPoint"
+
+  /reports/source-effectiveness:
+    get:
+      operationId: getSourceEffectiveness
+      tags: [reports]
+      summary: Candidate source effectiveness breakdown
+      responses:
+        "200":
+          description: Source data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SourceStat"
+
+  /reports/recruiter-performance:
+    get:
+      operationId: getRecruiterPerformance
+      tags: [reports]
+      summary: Recruiter performance metrics
+      responses:
+        "200":
+          description: Recruiter metrics
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RecruiterStat"
+
+  /reports/offer-acceptance:
+    get:
+      operationId: getOfferAcceptance
+      tags: [reports]
+      summary: Offer acceptance ratio by department
+      responses:
+        "200":
+          description: Offer acceptance data
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OfferAcceptanceStat"
+
+  # ─── ADMIN ────────────────────────────────────────────────────────────────────
+  /admin/departments:
+    get:
+      operationId: listDepartments
+      tags: [admin]
+      summary: List departments
+      responses:
+        "200":
+          description: Departments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Department"
+    post:
+      operationId: createDepartment
+      tags: [admin]
+      summary: Create a department
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DepartmentInput"
+      responses:
+        "201":
+          description: Created department
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Department"
+
+  /admin/job-grades:
+    get:
+      operationId: listJobGrades
+      tags: [admin]
+      summary: List job grades and bands
+      responses:
+        "200":
+          description: Job grades
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/JobGrade"
+
+  /admin/users:
+    get:
+      operationId: listUsers
+      tags: [admin]
+      summary: List system users
+      responses:
+        "200":
+          description: Users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+    post:
+      operationId: createUser
+      tags: [admin]
+      summary: Create a system user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserInput"
+      responses:
+        "201":
+          description: Created user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /admin/users/{id}:
+    patch:
+      operationId: updateUser
+      tags: [admin]
+      summary: Update a user
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdate"
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+# ─── COMPONENTS ────────────────────────────────────────────────────────────────
 components:
   schemas:
     HealthStatus:
       type: object
+      required: [status]
       properties:
         status:
           type: string
-      required:
-        - status
 
+    # AUTH
+    LoginInput:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+
+    AuthResponse:
+      type: object
+      required: [user, token]
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        token:
+          type: string
+
+    User:
+      type: object
+      required: [id, name, email, role]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+          enum: [hr_admin, recruiter, hiring_manager, finance_approver, department_head, executive_viewer, candidate]
+        department:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+
+    UserInput:
+      type: object
+      required: [name, email, role, password]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+        department:
+          type: ["string", "null"]
+        password:
+          type: string
+
+    UserUpdate:
+      type: object
+      properties:
+        name:
+          type: string
+        role:
+          type: string
+        department:
+          type: ["string", "null"]
+        isActive:
+          type: boolean
+
+    # DASHBOARD
+    HrDashboard:
+      type: object
+      required: [openPositions, activeRequisitions, candidatesInPipeline, offersPending, hiresThisMonth, recruiterWorkload, applicationsByWeek]
+      properties:
+        openPositions:
+          type: integer
+        activeRequisitions:
+          type: integer
+        candidatesInPipeline:
+          type: integer
+        offersPending:
+          type: integer
+        hiresThisMonth:
+          type: integer
+        applicationsThisWeek:
+          type: integer
+        avgHiringDays:
+          type: number
+        recruiterWorkload:
+          type: array
+          items:
+            $ref: "#/components/schemas/RecruiterWorkload"
+        applicationsByWeek:
+          type: array
+          items:
+            $ref: "#/components/schemas/WeeklyCount"
+
+    HiringManagerDashboard:
+      type: object
+      required: [pendingApprovals, pendingFeedback, openRequisitions, shortlistedCandidates]
+      properties:
+        pendingApprovals:
+          type: integer
+        pendingFeedback:
+          type: integer
+        openRequisitions:
+          type: integer
+        shortlistedCandidates:
+          type: integer
+        agingRequisitions:
+          type: array
+          items:
+            $ref: "#/components/schemas/AgingRequisition"
+
+    ExecutiveDashboard:
+      type: object
+      required: [avgTimeToHire, hiringByDepartment, offerAcceptanceRate, slaComplianceRate]
+      properties:
+        avgTimeToHire:
+          type: number
+        offerAcceptanceRate:
+          type: number
+        slaComplianceRate:
+          type: number
+        totalHiresYTD:
+          type: integer
+        hiringByDepartment:
+          type: array
+          items:
+            $ref: "#/components/schemas/DepartmentHiring"
+
+    ComplianceDashboard:
+      type: object
+      required: [slaBreaches, overdueApprovals, recentAuditEvents]
+      properties:
+        slaBreaches:
+          type: integer
+        overdueApprovals:
+          type: integer
+        workflowBottlenecks:
+          type: integer
+        recentAuditEvents:
+          type: array
+          items:
+            $ref: "#/components/schemas/AuditLog"
+
+    PipelineStageStat:
+      type: object
+      required: [stage, count]
+      properties:
+        stage:
+          type: string
+        count:
+          type: integer
+
+    ActivityItem:
+      type: object
+      required: [id, action, entityType, entityLabel, userName, timestamp]
+      properties:
+        id:
+          type: integer
+        action:
+          type: string
+        entityType:
+          type: string
+        entityLabel:
+          type: string
+        userName:
+          type: string
+        timestamp:
+          type: string
+
+    RecruiterWorkload:
+      type: object
+      required: [recruiterName, openPositions, activeCandidates]
+      properties:
+        recruiterName:
+          type: string
+        openPositions:
+          type: integer
+        activeCandidates:
+          type: integer
+
+    WeeklyCount:
+      type: object
+      required: [week, count]
+      properties:
+        week:
+          type: string
+        count:
+          type: integer
+
+    AgingRequisition:
+      type: object
+      required: [id, title, department, daysOpen]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        department:
+          type: string
+        daysOpen:
+          type: integer
+
+    DepartmentHiring:
+      type: object
+      required: [department, count]
+      properties:
+        department:
+          type: string
+        count:
+          type: integer
+
+    # REQUISITIONS
+    Requisition:
+      type: object
+      required: [id, department, jobTitle, grade, headcount, justification, employmentType, location, status, workflowStage, createdAt]
+      properties:
+        id:
+          type: integer
+        department:
+          type: string
+        jobTitle:
+          type: string
+        grade:
+          type: string
+        budget:
+          type: ["number", "null"]
+        headcount:
+          type: integer
+        justification:
+          type: string
+        employmentType:
+          type: string
+          enum: [permanent, contract, temporary]
+        location:
+          type: string
+        joiningDate:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [draft, submitted, approved, rejected, cancelled]
+        workflowStage:
+          type: string
+        currentApproverId:
+          type: ["integer", "null"]
+        createdById:
+          type: integer
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+
+    RequisitionInput:
+      type: object
+      required: [department, jobTitle, grade, headcount, justification, employmentType, location]
+      properties:
+        department:
+          type: string
+        jobTitle:
+          type: string
+        grade:
+          type: string
+        budget:
+          type: ["number", "null"]
+        headcount:
+          type: integer
+        justification:
+          type: string
+        employmentType:
+          type: string
+        location:
+          type: string
+        joiningDate:
+          type: ["string", "null"]
+
+    RequisitionUpdate:
+      type: object
+      properties:
+        department:
+          type: string
+        jobTitle:
+          type: string
+        grade:
+          type: string
+        budget:
+          type: ["number", "null"]
+        headcount:
+          type: integer
+        justification:
+          type: string
+        employmentType:
+          type: string
+        location:
+          type: string
+        joiningDate:
+          type: ["string", "null"]
+        status:
+          type: string
+
+    RequisitionList:
+      type: object
+      required: [data, total]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Requisition"
+        total:
+          type: integer
+
+    ApprovalAction:
+      type: object
+      required: [action]
+      properties:
+        action:
+          type: string
+          enum: [approve, reject]
+        comments:
+          type: string
+
+    WorkflowHistoryItem:
+      type: object
+      required: [id, step, action, approverName, timestamp]
+      properties:
+        id:
+          type: integer
+        step:
+          type: string
+        action:
+          type: string
+        approverName:
+          type: string
+        comments:
+          type: ["string", "null"]
+        timestamp:
+          type: string
+
+    # JOBS
+    Job:
+      type: object
+      required: [id, title, department, type, status, createdAt]
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        department:
+          type: string
+        description:
+          type: ["string", "null"]
+        competencies:
+          type: array
+          items:
+            type: string
+        type:
+          type: string
+          enum: [internal, external, both]
+        status:
+          type: string
+          enum: [draft, active, closed, expired]
+        source:
+          type: ["string", "null"]
+        expiryDate:
+          type: ["string", "null"]
+        requisitionId:
+          type: ["integer", "null"]
+        applicationCount:
+          type: integer
+        createdAt:
+          type: string
+
+    JobInput:
+      type: object
+      required: [title, department, type]
+      properties:
+        title:
+          type: string
+        department:
+          type: string
+        description:
+          type: ["string", "null"]
+        competencies:
+          type: array
+          items:
+            type: string
+        type:
+          type: string
+        expiryDate:
+          type: ["string", "null"]
+        source:
+          type: ["string", "null"]
+        requisitionId:
+          type: ["integer", "null"]
+
+    JobUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: ["string", "null"]
+        status:
+          type: string
+        type:
+          type: string
+        expiryDate:
+          type: ["string", "null"]
+        competencies:
+          type: array
+          items:
+            type: string
+
+    # CANDIDATES
+    Candidate:
+      type: object
+      required: [id, firstName, lastName, email, source, createdAt]
+      properties:
+        id:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: ["string", "null"]
+        currentRole:
+          type: ["string", "null"]
+        currentCompany:
+          type: ["string", "null"]
+        yearsOfExperience:
+          type: ["number", "null"]
+        skills:
+          type: array
+          items:
+            type: string
+        source:
+          type: string
+        resumeUrl:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        tags:
+          type: array
+          items:
+            type: string
+        aiMatchScore:
+          type: ["number", "null"]
+        createdAt:
+          type: string
+
+    CandidateInput:
+      type: object
+      required: [firstName, lastName, email, source]
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: ["string", "null"]
+        currentRole:
+          type: ["string", "null"]
+        currentCompany:
+          type: ["string", "null"]
+        yearsOfExperience:
+          type: ["number", "null"]
+        skills:
+          type: array
+          items:
+            type: string
+        source:
+          type: string
+        resumeUrl:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+
+    CandidateUpdate:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          type: ["string", "null"]
+        currentRole:
+          type: ["string", "null"]
+        currentCompany:
+          type: ["string", "null"]
+        yearsOfExperience:
+          type: ["number", "null"]
+        skills:
+          type: array
+          items:
+            type: string
+        notes:
+          type: ["string", "null"]
+        tags:
+          type: array
+          items:
+            type: string
+
+    CandidateList:
+      type: object
+      required: [data, total]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Candidate"
+        total:
+          type: integer
+
+    AiAnalysis:
+      type: object
+      required: [candidateId, summary, matchScore, strengths, gaps, recommendation, generatedAt]
+      properties:
+        candidateId:
+          type: integer
+        summary:
+          type: string
+        matchScore:
+          type: number
+        extractedSkills:
+          type: array
+          items:
+            type: string
+        strengths:
+          type: array
+          items:
+            type: string
+        gaps:
+          type: array
+          items:
+            type: string
+        recommendation:
+          type: string
+          enum: [strong_hire, hire, maybe, no_hire]
+        recommendationRationale:
+          type: string
+        generatedAt:
+          type: string
+
+    # APPLICATIONS
+    Application:
+      type: object
+      required: [id, candidateId, jobId, stage, appliedAt]
+      properties:
+        id:
+          type: integer
+        candidateId:
+          type: integer
+        jobId:
+          type: integer
+        candidate:
+          $ref: "#/components/schemas/Candidate"
+        job:
+          $ref: "#/components/schemas/Job"
+        stage:
+          type: string
+          enum: [applied, under_review, longlisted, shortlisted, interview_scheduled, interviewed, offer_pending, offered, hired, rejected]
+        notes:
+          type: ["string", "null"]
+        rejectionReason:
+          type: ["string", "null"]
+        appliedAt:
+          type: string
+        updatedAt:
+          type: string
+
+    ApplicationInput:
+      type: object
+      required: [candidateId, jobId]
+      properties:
+        candidateId:
+          type: integer
+        jobId:
+          type: integer
+        notes:
+          type: ["string", "null"]
+
+    ApplicationUpdate:
+      type: object
+      properties:
+        stage:
+          type: string
+        notes:
+          type: ["string", "null"]
+        rejectionReason:
+          type: ["string", "null"]
+
+    ApplicationList:
+      type: object
+      required: [data, total]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Application"
+        total:
+          type: integer
+
+    StageMove:
+      type: object
+      required: [stage]
+      properties:
+        stage:
+          type: string
+        notes:
+          type: ["string", "null"]
+
+    # INTERVIEWS
+    Interview:
+      type: object
+      required: [id, applicationId, scheduledAt, type, status, createdAt]
+      properties:
+        id:
+          type: integer
+        applicationId:
+          type: integer
+        application:
+          $ref: "#/components/schemas/Application"
+        scheduledAt:
+          type: string
+        duration:
+          type: integer
+        type:
+          type: string
+          enum: [phone_screen, technical, behavioral, panel, final]
+        status:
+          type: string
+          enum: [scheduled, completed, cancelled, rescheduled]
+        location:
+          type: ["string", "null"]
+        meetingUrl:
+          type: ["string", "null"]
+        panelMembers:
+          type: array
+          items:
+            type: string
+        notes:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    InterviewInput:
+      type: object
+      required: [applicationId, scheduledAt, type]
+      properties:
+        applicationId:
+          type: integer
+        scheduledAt:
+          type: string
+        duration:
+          type: integer
+        type:
+          type: string
+        location:
+          type: ["string", "null"]
+        meetingUrl:
+          type: ["string", "null"]
+        panelMembers:
+          type: array
+          items:
+            type: string
+        notes:
+          type: ["string", "null"]
+
+    InterviewUpdate:
+      type: object
+      properties:
+        scheduledAt:
+          type: string
+        status:
+          type: string
+        location:
+          type: ["string", "null"]
+        meetingUrl:
+          type: ["string", "null"]
+        panelMembers:
+          type: array
+          items:
+            type: string
+        notes:
+          type: ["string", "null"]
+
+    InterviewFeedback:
+      type: object
+      required: [id, interviewId, interviewerName, recommendation, overallScore, createdAt]
+      properties:
+        id:
+          type: integer
+        interviewId:
+          type: integer
+        interviewerName:
+          type: string
+        technicalScore:
+          type: ["number", "null"]
+        behavioralScore:
+          type: ["number", "null"]
+        overallScore:
+          type: number
+        strengths:
+          type: ["string", "null"]
+        concerns:
+          type: ["string", "null"]
+        recommendation:
+          type: string
+          enum: [strong_hire, hire, maybe, no_hire]
+        comments:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+
+    InterviewFeedbackInput:
+      type: object
+      required: [interviewerName, recommendation, overallScore]
+      properties:
+        interviewerName:
+          type: string
+        technicalScore:
+          type: ["number", "null"]
+        behavioralScore:
+          type: ["number", "null"]
+        overallScore:
+          type: number
+        strengths:
+          type: ["string", "null"]
+        concerns:
+          type: ["string", "null"]
+        recommendation:
+          type: string
+        comments:
+          type: ["string", "null"]
+
+    AiInterviewSummary:
+      type: object
+      required: [interviewId, summary, overallAssessment, generatedAt]
+      properties:
+        interviewId:
+          type: integer
+        summary:
+          type: string
+        keyStrengths:
+          type: array
+          items:
+            type: string
+        keyGaps:
+          type: array
+          items:
+            type: string
+        overallAssessment:
+          type: string
+        panelConsensus:
+          type: string
+        generatedAt:
+          type: string
+
+    # OFFERS
+    Offer:
+      type: object
+      required: [id, applicationId, baseSalary, status, createdAt]
+      properties:
+        id:
+          type: integer
+        applicationId:
+          type: integer
+        application:
+          $ref: "#/components/schemas/Application"
+        baseSalary:
+          type: number
+        allowances:
+          type: number
+        bonus:
+          type: ["number", "null"]
+        totalPackage:
+          type: number
+        currency:
+          type: string
+        joiningDate:
+          type: ["string", "null"]
+        expiryDate:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [draft, pending_approval, approved, sent, accepted, declined, withdrawn]
+        offerLetterUrl:
+          type: ["string", "null"]
+        version:
+          type: integer
+        createdAt:
+          type: string
+        updatedAt:
+          type: string
+
+    OfferInput:
+      type: object
+      required: [applicationId, baseSalary, allowances, currency]
+      properties:
+        applicationId:
+          type: integer
+        baseSalary:
+          type: number
+        allowances:
+          type: number
+        bonus:
+          type: ["number", "null"]
+        currency:
+          type: string
+        joiningDate:
+          type: ["string", "null"]
+        expiryDate:
+          type: ["string", "null"]
+
+    OfferUpdate:
+      type: object
+      properties:
+        baseSalary:
+          type: number
+        allowances:
+          type: number
+        bonus:
+          type: ["number", "null"]
+        joiningDate:
+          type: ["string", "null"]
+        expiryDate:
+          type: ["string", "null"]
+        status:
+          type: string
+
+    # ONBOARDING
+    OnboardingRecord:
+      type: object
+      required: [id, candidateId, startDate, status, createdAt]
+      properties:
+        id:
+          type: integer
+        candidateId:
+          type: integer
+        candidate:
+          $ref: "#/components/schemas/Candidate"
+        startDate:
+          type: string
+        department:
+          type: string
+        manager:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [pending, in_progress, completed]
+        completedTasks:
+          type: integer
+        totalTasks:
+          type: integer
+        createdAt:
+          type: string
+
+    OnboardingInput:
+      type: object
+      required: [candidateId, startDate, department]
+      properties:
+        candidateId:
+          type: integer
+        startDate:
+          type: string
+        department:
+          type: string
+        manager:
+          type: ["string", "null"]
+
+    OnboardingTask:
+      type: object
+      required: [id, onboardingId, title, category, status, dueDate]
+      properties:
+        id:
+          type: integer
+        onboardingId:
+          type: integer
+        title:
+          type: string
+        category:
+          type: string
+          enum: [it_provisioning, hr_admin, payroll, compliance, access]
+        status:
+          type: string
+          enum: [pending, in_progress, completed, blocked]
+        assignee:
+          type: ["string", "null"]
+        dueDate:
+          type: string
+        completedAt:
+          type: ["string", "null"]
+
+    OnboardingTaskUpdate:
+      type: object
+      properties:
+        status:
+          type: string
+        assignee:
+          type: ["string", "null"]
+        completedAt:
+          type: ["string", "null"]
+
+    # AUDIT
+    AuditLog:
+      type: object
+      required: [id, action, entityType, userId, userName, timestamp]
+      properties:
+        id:
+          type: integer
+        action:
+          type: string
+        entityType:
+          type: string
+        entityId:
+          type: ["integer", "null"]
+        userId:
+          type: integer
+        userName:
+          type: string
+        details:
+          type: ["string", "null"]
+        ipAddress:
+          type: ["string", "null"]
+        timestamp:
+          type: string
+
+    AuditLogList:
+      type: object
+      required: [data, total]
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/AuditLog"
+        total:
+          type: integer
+
+    # NOTIFICATIONS
+    Notification:
+      type: object
+      required: [id, type, message, read, createdAt]
+      properties:
+        id:
+          type: integer
+        type:
+          type: string
+          enum: [approval_required, interview_scheduled, offer_approved, sla_breach, onboarding_task, general]
+        message:
+          type: string
+        entityType:
+          type: ["string", "null"]
+        entityId:
+          type: ["integer", "null"]
+        read:
+          type: boolean
+        createdAt:
+          type: string
+
+    # APPROVALS
+    PendingApproval:
+      type: object
+      required: [id, entityType, entityLabel, requestedBy, requestedAt, stage]
+      properties:
+        id:
+          type: integer
+        entityType:
+          type: string
+        entityId:
+          type: integer
+        entityLabel:
+          type: string
+        requestedBy:
+          type: string
+        requestedAt:
+          type: string
+        stage:
+          type: string
+        daysWaiting:
+          type: integer
+
+    # REPORTS
+    HiringTrendPoint:
+      type: object
+      required: [month, applications, hires]
+      properties:
+        month:
+          type: string
+        applications:
+          type: integer
+        hires:
+          type: integer
+        department:
+          type: ["string", "null"]
+
+    SourceStat:
+      type: object
+      required: [source, applications, hires, conversionRate]
+      properties:
+        source:
+          type: string
+        applications:
+          type: integer
+        hires:
+          type: integer
+        conversionRate:
+          type: number
+
+    RecruiterStat:
+      type: object
+      required: [recruiterName, openPositions, candidatesManaged, avgTimeToClose, offersExtended]
+      properties:
+        recruiterName:
+          type: string
+        openPositions:
+          type: integer
+        candidatesManaged:
+          type: integer
+        avgTimeToClose:
+          type: number
+        offersExtended:
+          type: integer
+
+    OfferAcceptanceStat:
+      type: object
+      required: [department, offered, accepted, declined, acceptanceRate]
+      properties:
+        department:
+          type: string
+        offered:
+          type: integer
+        accepted:
+          type: integer
+        declined:
+          type: integer
+        acceptanceRate:
+          type: number
+
+    # ADMIN
+    Department:
+      type: object
+      required: [id, name, headCount]
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        headCount:
+          type: integer
+        headOfDepartment:
+          type: ["string", "null"]
+
+    DepartmentInput:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string
+        headOfDepartment:
+          type: ["string", "null"]
+
+    JobGrade:
+      type: object
+      required: [id, grade, band, minSalary, maxSalary]
+      properties:
+        id:
+          type: integer
+        grade:
+          type: string
+        band:
+          type: string
+        minSalary:
+          type: number
+        maxSalary:
+          type: number

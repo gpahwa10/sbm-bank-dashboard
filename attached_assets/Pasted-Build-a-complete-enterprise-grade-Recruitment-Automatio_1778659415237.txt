@@ -1,0 +1,644 @@
+Build a complete enterprise-grade Recruitment Automation Platform (ATS) for a banking environment using Microsoft ecosystem architecture patterns.
+
+This is NOT a startup HR app.
+This is NOT a flashy SaaS landing page.
+This is NOT a template dashboard.
+
+The final product must feel like:
+- a real internal banking operations platform
+- workflow-driven
+- operationally mature
+- data-heavy
+- enterprise-grade
+- secure
+- highly readable
+- structured and clean
+
+The platform must support:
+- recruitment workflow automation
+- candidate management
+- AI-powered resume intelligence
+- interview management
+- offer workflows
+- onboarding
+- enterprise approvals
+- dashboards
+- audit/security controls
+- configurable workflow management
+
+==================================================
+DESIGN SYSTEM REQUIREMENTS
+==================================================
+
+STRICTLY FOLLOW THESE RULES:
+
+DO NOT USE:
+- gradients
+- glassmorphism
+- purple-heavy backgrounds
+- floating orbs
+- fake testimonial cards
+- template SaaS sections
+- neumorphism
+- animated blobs
+- excessive shadows
+- floating widgets
+- fake UI concepts
+- cluttered dashboards
+
+USE:
+- flat design
+- structured layouts
+- clean hierarchy
+- subtle borders
+- readable tables
+- professional spacing
+- enterprise typography
+- practical UI patterns
+- structured cards
+- minimal but functional interactions
+
+==================================================
+COLOR SYSTEM
+==================================================
+
+Use only:
+- one primary flat color
+- one accent color
+- neutral grays
+- white/light background
+
+Recommended palette:
+Primary: #0F172A
+Accent: #2563EB
+Background: #F8FAFC
+Border: #E2E8F0
+Success: #16A34A
+Warning: #D97706
+Danger: #DC2626
+
+DO NOT:
+- use neon colors
+- use multi-color dashboards
+- use gradients anywhere
+- use purple/pink futuristic themes
+
+==================================================
+TYPOGRAPHY
+==================================================
+
+Use ONE professional font only.
+
+Recommended:
+- Inter
+OR
+- IBM Plex Sans
+
+Requirements:
+- proper line height
+- readable spacing
+- strong visual hierarchy
+- enterprise readability
+
+Typography scale:
+- H1 → 32px
+- H2 → 24px
+- H3 → 20px
+- Body → 14–16px
+- Table text → 13–14px
+
+Maintain:
+- consistent spacing
+- clean alignment
+- comfortable padding
+
+Avoid:
+- oversized hero typography
+- compressed layouts
+- startup-style marketing sections
+
+==================================================
+COPYWRITING RULES
+==================================================
+
+Rewrite ALL copy in plain English.
+
+DO NOT USE:
+- “Revolutionize”
+- “Empower”
+- “Transform hiring”
+- “Next-gen”
+- “Cutting-edge”
+- “AI-driven synergy”
+- “Future-ready ecosystem”
+- generic marketing fluff
+
+Use direct operational language instead.
+
+Examples:
+
+BAD:
+“Empower your recruitment teams with intelligent hiring.”
+
+GOOD:
+“Track hiring requests, approvals, interviews, and offers in one system.”
+
+BAD:
+“AI-powered talent transformation.”
+
+GOOD:
+“AI reads resumes and ranks candidates against job requirements.”
+
+==================================================
+USE REALISTIC DATA
+==================================================
+
+DO NOT USE:
+- lorem ipsum
+- fake testimonials
+- fake startup stats
+- meaningless placeholder charts
+
+USE:
+- realistic employee names
+- realistic departments
+- actual recruitment metrics
+- meaningful analytics
+
+Examples:
+- 42 open positions
+- 138 applications this week
+- Average hiring time: 19 days
+- 6 offers pending approval
+
+==================================================
+ARCHITECTURE
+==================================================
+
+Build the platform using Microsoft enterprise architecture patterns.
+
+Frontend:
+- Power Apps inspired enterprise UX
+OR
+- React enterprise dashboard architecture
+
+Backend:
+- modular architecture
+- workflow-driven services
+- approval engine
+- scalable APIs
+
+Workflow Layer:
+- Power Automate inspired orchestration
+
+Database:
+- Dataverse/SQL style schema
+
+Analytics:
+- Power BI style dashboards
+
+Security:
+- Azure AD RBAC concepts
+
+AI Layer:
+- OpenAI/Azure OpenAI integration structure
+
+==================================================
+MODULES TO BUILD
+==================================================
+
+1. Authentication & Access Control
+- Azure AD style login
+- SSO-ready authentication
+- role-based access control
+- permission matrix
+- audit logging
+- restricted access by role
+
+Roles:
+- HR Admin
+- Recruiter
+- Hiring Manager
+- Finance Approver
+- Department Head
+- Executive Viewer
+- Candidate
+
+==================================================
+
+2. Dashboard System
+
+Build multiple dashboards.
+
+HR Dashboard:
+- open positions
+- active requisitions
+- candidate pipeline
+- offers pending
+- hires completed
+- recruiter workload
+
+Hiring Manager Dashboard:
+- pending approvals
+- pending interview feedback
+- requisition aging
+- shortlisted candidates
+
+Executive Dashboard:
+- time-to-hire
+- hiring by department
+- offer acceptance ratio
+- recruitment SLA metrics
+- source effectiveness
+
+Compliance Dashboard:
+- audit logs
+- SLA breaches
+- overdue approvals
+- workflow bottlenecks
+
+Dashboard styling:
+- clean charts
+- readable tables
+- structured metrics
+- no clutter
+
+==================================================
+
+3. Manpower Requisition Module
+
+Build complete hiring request workflow.
+
+Fields:
+- department
+- job title
+- grade/band
+- budget
+- headcount
+- justification
+- employment type
+- location
+- required joining date
+
+Workflow:
+1. Hiring manager submits request
+2. Department head approves
+3. HR reviews
+4. Finance approves if required
+5. Final approval
+
+Features:
+- SLA timers
+- escalations
+- comments
+- workflow history
+- audit trail
+
+==================================================
+
+4. Workflow Engine
+
+Build configurable approval workflows.
+
+Features:
+- dynamic approval routing
+- conditional approvals
+- maker-checker logic
+- escalation engine
+- SLA tracking
+- email notifications
+- Teams notifications
+- workflow history
+- approval comments
+
+Admin must configure:
+- approvers
+- rules
+- escalation logic
+- SLA timing
+
+Avoid hardcoded workflow logic.
+
+==================================================
+
+5. Job Posting Management
+
+Features:
+- create job postings
+- define job descriptions
+- competency mapping
+- internal/external posting
+- expiry dates
+- source tracking
+
+Publishing support:
+- careers portal
+- LinkedIn integration placeholder
+- job board integration placeholder
+- internal careers page
+
+==================================================
+
+6. Candidate Portal
+
+Build a public-facing candidate portal.
+
+Features:
+- mobile responsive
+- profile creation
+- resume upload
+- application tracking
+- duplicate profile detection
+- saved applications
+- privacy consent
+
+Candidate should view:
+- applied jobs
+- interview schedules
+- offer status
+
+==================================================
+
+7. Candidate Management (ATS Pipeline)
+
+Build Kanban + table pipeline.
+
+Stages:
+- Applied
+- Under Review
+- Longlisted
+- Shortlisted
+- Interview Scheduled
+- Interviewed
+- Offer Pending
+- Offered
+- Hired
+- Rejected
+
+Features:
+- drag/drop stages
+- recruiter notes
+- activity history
+- filtering
+- tagging
+- bulk actions
+- advanced search
+
+==================================================
+
+8. AI Resume Parsing
+
+Build AI workflow for CV analysis.
+
+AI should:
+- extract:
+  - name
+  - skills
+  - experience
+  - education
+  - certifications
+
+Generate:
+- candidate summary
+- skill match percentage
+- strengths
+- missing skills
+- hiring recommendation
+
+UI should show:
+- parsed resume panel
+- skill highlights
+- AI match score
+- structured analysis
+
+DO NOT make this gimmicky.
+Keep it professional and data-oriented.
+
+==================================================
+
+9. AI Candidate Intelligence
+
+Features:
+- AI-generated shortlist rationale
+- candidate fit explanation
+- similarity scoring
+- AI recruiter assistant
+
+Example:
+“This candidate matches 82% of required AML and compliance skills.”
+
+==================================================
+
+10. Interview Management
+
+Features:
+- panel selection
+- interview scheduling
+- Outlook integration placeholder
+- Teams integration placeholder
+- automated invites
+- interviewer feedback forms
+- interview scorecards
+- consolidated evaluations
+
+Build:
+- interview calendar
+- evaluation forms
+- panel feedback system
+
+==================================================
+
+11. AI Interview Assistance
+
+Features:
+- AI-generated interview questions
+- competency-based questions
+- AI-generated interview summaries
+- feedback summarization
+
+Example:
+“Candidate demonstrated strong operational risk experience but limited treasury exposure.”
+
+==================================================
+
+12. Offer Management
+
+Features:
+- compensation breakdown
+- approval workflow
+- offer letter generation
+- PDF export
+- e-signature placeholder
+- version history
+- acceptance tracking
+
+Statuses:
+- Draft
+- Pending Approval
+- Approved
+- Sent
+- Accepted
+- Declined
+
+==================================================
+
+13. Onboarding Module
+
+Features:
+- document checklist
+- HR onboarding tasks
+- IT provisioning tasks
+- joining confirmation
+- onboarding status tracking
+
+Tasks:
+- laptop allocation
+- ID creation
+- payroll setup
+- compliance document collection
+
+==================================================
+
+14. Notification System
+
+Build:
+- email notifications
+- in-app notifications
+- Teams notification placeholders
+
+Trigger notifications for:
+- approvals
+- interview schedules
+- SLA breaches
+- offer approvals
+- onboarding tasks
+
+==================================================
+
+15. Audit & Compliance
+
+Critical banking requirement.
+
+Track:
+- approvals
+- status changes
+- document downloads
+- workflow actions
+- user activity
+
+Features:
+- immutable audit history
+- timestamp logs
+- exportable audit reports
+
+==================================================
+
+16. Admin Configuration Panel
+
+Admin must configure:
+- workflow stages
+- approval hierarchy
+- SLA timing
+- notification templates
+- departments
+- job grades
+- interview templates
+
+System must be configurable.
+Avoid hardcoded business logic.
+
+==================================================
+
+17. Reports & Analytics
+
+Build reports for:
+- hiring trends
+- recruiter performance
+- source effectiveness
+- interview conversion
+- offer acceptance ratio
+- average hiring time
+
+Provide:
+- export to Excel
+- export to PDF
+- filters
+- drilldowns
+
+==================================================
+UI/UX REQUIREMENTS
+==================================================
+
+The platform should feel:
+- operational
+- enterprise-grade
+- readable
+- structured
+- practical
+
+Use:
+- sticky table headers
+- filter bars
+- structured forms
+- practical spacing
+- meaningful empty states
+- fast interactions
+
+Avoid:
+- oversized cards
+- flashy animation
+- startup landing page sections
+- excessive whitespace
+- decorative graphics
+
+Animations:
+- subtle only
+- fast
+- purposeful
+
+==================================================
+RESPONSIVENESS
+==================================================
+
+Support:
+- desktop
+- tablet
+- mobile
+
+Priority:
+- desktop-first enterprise experience
+
+==================================================
+PERFORMANCE
+==================================================
+
+Optimize:
+- dashboard rendering
+- large tables
+- filtering
+- workflow execution
+- candidate search
+
+Support large enterprise recruitment datasets.
+
+==================================================
+FINAL EXPECTATION
+==================================================
+
+The final platform must look and feel like:
+- a real enterprise banking ATS
+- already used internally by HR teams
+- workflow-heavy
+- operationally mature
+- secure
+- governance-focused
+- AI-assisted but not gimmicky
+
+The system should communicate:
+- reliability
+- operational clarity
+- enterprise structure
+- process maturity
+- banking-grade governance
+
+without visual gimmicks or startup-style fluff.
